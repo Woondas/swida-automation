@@ -125,10 +125,13 @@ test.describe('[Positive-test]', () => {
     await create_request.validate.validate_block("//*[@id='form-review']", review_filled, 'review');
 
     const auction_id = await create_request.validate.click_and_wait_for_transport_request('Send request');
-    console.log('Auctions:', auction_id);
     created_auction_ids = Array.isArray(auction_id) ? auction_id : [auction_id];
 
-    await create_request.validate.validate_block("//*[@id='form-review']", review_filled, 'review');
+    // verify the request detail header contains the created auction id
+    console.log(`Verifying request header contains auction id: #${created_auction_ids[0]}`);
+    await expect(page.locator("//*[@id='request-detail-header']")).toContainText(`#${created_auction_ids[0]}`);
+
+    await create_request.validate.validate_block("//*[@id='request-detail-header']", review_filled, 'review');
 
     await create_request.validate.click_and_verify_active_state("//*[@id='tab-request-route']");
     await create_request.validate.waypoint(0, pickup_filled);
